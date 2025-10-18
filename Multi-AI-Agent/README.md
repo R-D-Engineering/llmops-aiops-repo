@@ -9,14 +9,7 @@ python -V
 
 pip install -e .
 
-Groq api key
 
-new_api_key
-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
-
-Tavily api key
-new_api_key
-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
 
 python app/main.py
 
