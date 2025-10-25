@@ -6,11 +6,11 @@ stages:
   - deploy
 
 variables:
-  PROJECT_ID: "gen-lang-client-0729539659"
-  REGION: "us-central1"
+  PROJECT_ID: "even-kite-476205-d1"
+  REGION: "us-east1"
   REPO: "llmops-repo"
-  REGISTRY: "us-central1-docker.pkg.dev"
-  CLUSTER: "llmops"
+  REGISTRY: "us-east1-docker.pkg.dev"
+  CLUSTER: "dev-gke01"
 
 checkout_code:
   stage: checkout
@@ -19,6 +19,7 @@ checkout_code:
 
 build_docker_image:
   stage: build
+  image: docker:latest
   services:
     - name: docker:dind
       command: ["--tls=false"]
@@ -26,6 +27,9 @@ build_docker_image:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
   before_script:
+    - apk add --no-cache curl python3 py3-crcmod bash
+    - curl -sSL https://sdk.cloud.google.com | bash > /dev/null
+    - export PATH="$PATH:/root/google-cloud-sdk/bin"
     - echo "$GCP_SA_KEY" | base64 -d > gcp-key.json
     - gcloud auth activate-service-account --key-file=gcp-key.json
     - gcloud auth configure-docker $REGISTRY
@@ -35,6 +39,7 @@ build_docker_image:
 
 deploy_to_gke:
   stage: deploy
+  image: google/cloud-sdk:latest
   before_script:
     - echo "$GCP_SA_KEY" | base64 -d > gcp-key.json
     - gcloud auth activate-service-account --key-file=gcp-key.json
