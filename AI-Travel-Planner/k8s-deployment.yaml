@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: streamlit-container
-          image: streamlit-app:latest
+          image: anoophegde1995/streamlit-app:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8501
