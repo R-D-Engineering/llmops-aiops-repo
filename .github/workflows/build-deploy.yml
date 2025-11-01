@@ -9,6 +9,7 @@ env:
   IMAGE_NAME: llmops-app
   REGION: us-east1
   REPO_NAME: llmops-repo
+  USE_GKE_GCLOUD_AUTH_PLUGIN: True
 
 jobs:
   build-and-deploy:
@@ -27,6 +28,12 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
+      
+      - name: Install GKE auth plugin
+        run: |
+           sudo apt-get update -y
+           sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+           echo "export USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
 
       - name: Configure Docker for Artifact Registry
         run: |
@@ -35,11 +42,16 @@ jobs:
       - name: Build Docker image
         run: |
           cd AI-Celebrity-Detector
+          IMAGE_TAG=${GITHUB_SHA::7}
+          docker build -t $REGION-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:$IMAGE_TAG .
           docker build -t $REGION-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:latest .
 
       - name: Push Docker image
         run: |
+          IMAGE_TAG=${GITHUB_SHA::7}
+          docker push $REGION-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:$IMAGE_TAG
           docker push $REGION-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:latest
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Get GKE credentials
         run: |
