@@ -49,5 +49,6 @@ jobs:
 
       - name: Deploy to GKE
         run: |
+          cd AI-Celebrity-Detector
           kubectl apply -f kubernetes-deployment.yaml --validate=false
           kubectl rollout restart deployment $IMAGE_NAME
