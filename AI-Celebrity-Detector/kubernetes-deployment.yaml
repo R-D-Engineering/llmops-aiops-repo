@@ -21,7 +21,7 @@ spec:
         - name: GROQ_API_KEY
           valueFrom:
             secretKeyRef:
-              name: llmops-secrets
+              name: ai-celebrity-secrets
               key: GROQ_API_KEY
 
 ---
