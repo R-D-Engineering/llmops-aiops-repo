@@ -16,8 +16,9 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    cd llmops-aiops-repo/Study-Buddy-AI
-                    dockerImage = docker.build("${DOCKER_HUB_REPO}:${IMAGE_TAG}")
+                    dir('Study-Buddy-AI') {
+                        dockerImage = docker.build("${DOCKER_HUB_REPO}:${IMAGE_TAG}")
+                    }
                 }
             }
         }
@@ -35,7 +36,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    sed -i 's|image: anoophegde1995/studybuddy-ai:.*|image: anoophegde1995/studybuddy-ai:${IMAGE_TAG}|' manifests/deployment.yaml
+                    sed -i 's|image: anoophegde1995/studybuddy-ai:.*|image: anoophegde1995/studybuddy-ai:${IMAGE_TAG}|' Study-Buddy-AI/manifests/deployment.yaml
                     """
                 }
             }
