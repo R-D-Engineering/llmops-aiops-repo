@@ -16,6 +16,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
+                    cd llmops-aiops-repo/Study-Buddy-AI
                     dockerImage = docker.build("${DOCKER_HUB_REPO}:${IMAGE_TAG}")
                 }
             }
